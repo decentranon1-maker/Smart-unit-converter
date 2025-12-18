@@ -50,9 +50,25 @@ else if(cat==='weight'){const factors={Kilograms:1,Grams:0.001,Pounds:0.453592,O
 else if(cat==='distance'){const factors={Kilometers:1,Meters:0.001,Miles:1.60934,Yards:0.0009144};result=val*factors[from]/factors[to];}
 else if(cat==='currency'){convertCurrency(from,to,val);return;}
 outputEl.value=result.toFixed(4);resultText.textContent=`${val} ${from} = ${result.toFixed(4)} ${to}`;}
-async function convertCurrency(from,to,val){try{if(!ratesCache[from]){let res=await fetch(`https://api.exchangerate.host/latest?base=${from}`);let data=await res.json();ratesCache[from]=data.rates;}let rate=ratesCache[from][to];if(!rate){resultText.textContent='Conversion rate not available';return;}let result=val*rate;outputEl.value=result.toFixed(4);resultText.textContent=`${val} ${from} = ${result.toFixed(4)} ${to}`;}catch(e){resultText.textContent='Error fetching currency rates';}}
+async function convertCurrency(from,to,val){
+try{
+if(!ratesCache[from]){
+let res=await fetch(`https://open.er-api.com/v6/latest/${from}`);
+let data=await res.json();
+ratesCache[from]=data.rates;
+}
+let rate=ratesCache[from][to];
+if(!rate){resultText.textContent='Conversion rate not available';return;}
+let result=val*rate;
+outputEl.value=result.toFixed(4);
+resultText.textContent=`${val} ${from} = ${result.toFixed(4)} ${to}`;
+}catch(e){
+resultText.textContent='Unable to load live currency rates. Please check your connection or try again later.';
+}}
 categoryEl.addEventListener('change',()=>{populateUnits(categoryEl.value);convert();});
-inputEl.addEventListener('input',convert);fromEl.addEventListener('change',convert);toEl.addEventListener('change',convert);
+inputEl.addEventListener('input',convert);
+fromEl.addEventListener('change',convert);
+toEl.addEventListener('change',convert);
 copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(outputEl.value);copyBtn.textContent='Copied!';setTimeout(()=>copyBtn.textContent='Copy',1000);});
 populateUnits('temperature');
 </script>
