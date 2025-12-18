@@ -1,19 +1,26 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Smart Unit & Currency Converter</title><style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-body{background:#f4f6f8;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;color:#333}
-h1{font-size:1.8rem;margin-bottom:20px;text-align:center}
-.converter{background:#fff;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);padding:20px;max-width:400px;width:100%;transition:all .3s ease}
+body{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;
+background:linear-gradient(135deg,#4f46e5,#7c3aed,#06b6d4);color:#fff;overflow-x:hidden}
+h1{font-size:1.9rem;margin-bottom:25px;text-align:center;text-shadow:0 2px 5px rgba(0,0,0,0.25)}
+.converter{background:rgba(255,255,255,0.12);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.25);
+border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.2);padding:25px;max-width:400px;width:100%;transition:transform .3s ease,box-shadow .3s ease}
+.converter:hover{transform:translateY(-5px);box-shadow:0 12px 35px rgba(0,0,0,0.3)}
 .selectors{display:flex;justify-content:space-between;margin-bottom:15px;flex-wrap:wrap;gap:10px}
-select,input{width:48%;padding:10px;font-size:1rem;border:1px solid #ccc;border-radius:6px;transition:border-color .2s}
-select:focus,input:focus{border-color:#0078d7;outline:none}
-.category{margin-bottom:15px;width:100%}
-.result{background:#f0f4ff;border:1px solid #d0ddff;border-radius:6px;padding:12px;font-size:1.1rem;text-align:center;margin-top:10px;position:relative}
-button.copy-btn{position:absolute;top:8px;right:8px;background:#0078d7;color:#fff;border:none;padding:5px 8px;border-radius:4px;cursor:pointer;font-size:.8rem}
-button.copy-btn:hover{background:#005bb5}
+select,input{width:48%;padding:10px;font-size:1rem;border:1px solid rgba(255,255,255,0.3);border-radius:8px;background:rgba(255,255,255,0.15);
+color:#fff;transition:all .2s ease}
+select:focus,input:focus{border-color:#fff;outline:none;background:rgba(255,255,255,0.25)}
+option{color:#000}
 .category-select{margin-bottom:20px;width:100%}
-footer{margin-top:20px;font-size:.8rem;color:#777;text-align:center}
-.fade-in{animation:fadeIn .4s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.result{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:8px;
+padding:12px;font-size:1.1rem;text-align:center;margin-top:10px;position:relative;color:#fff}
+button.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,0.2);color:#fff;border:none;
+padding:6px 10px;border-radius:6px;cursor:pointer;font-size:.8rem;transition:all .2s ease}
+button.copy-btn:hover{background:rgba(255,255,255,0.4);transform:scale(1.05)}
+footer{margin-top:25px;font-size:.85rem;color:rgba(255,255,255,0.85);text-align:center;text-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.fade-in{animation:fadeIn .6s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:480px){.converter{padding:18px}h1{font-size:1.5rem}}
 </style></head><body>
 <h1>Smart Unit & Currency Converter</h1>
 <div class="converter fade-in">
@@ -35,7 +42,9 @@ footer{margin-top:20px;font-size:.8rem;color:#777;text-align:center}
 </div>
 <footer>© 2025 Smart Unit Converter</footer>
 <script>
-const categoryEl=document.getElementById('category'),fromEl=document.getElementById('fromUnit'),toEl=document.getElementById('toUnit'),inputEl=document.getElementById('inputValue'),outputEl=document.getElementById('outputValue'),resultText=document.getElementById('resultText'),copyBtn=document.getElementById('copyBtn');
+const categoryEl=document.getElementById('category'),fromEl=document.getElementById('fromUnit'),toEl=document.getElementById('toUnit'),
+inputEl=document.getElementById('inputValue'),outputEl=document.getElementById('outputValue'),resultText=document.getElementById('resultText'),
+copyBtn=document.getElementById('copyBtn');
 let ratesCache={};
 const units={
 temperature:['Celsius','Fahrenheit','Kelvin'],
@@ -43,9 +52,15 @@ weight:['Kilograms','Pounds','Grams','Ounces'],
 distance:['Kilometers','Miles','Meters','Yards'],
 currency:['USD','EUR','GBP','JPY','INR','CAD','AUD','CHF','NGN']
 };
-function populateUnits(cat){fromEl.innerHTML='';toEl.innerHTML='';units[cat].forEach(u=>{let o1=document.createElement('option');o1.value=u;o1.textContent=u;fromEl.appendChild(o1);let o2=document.createElement('option');o2.value=u;o2.textContent=u;toEl.appendChild(o2)});toEl.selectedIndex=1;}
-function convert(){let val=parseFloat(inputEl.value);if(isNaN(val)){resultText.textContent='Enter a valid number';outputEl.value='';return;}let cat=categoryEl.value,from=fromEl.value,to=toEl.value,result=val;
-if(cat==='temperature'){if(from===to)result=val;else if(from==='Celsius'&&to==='Fahrenheit')result=val*9/5+32;else if(from==='Celsius'&&to==='Kelvin')result=val+273.15;else if(from==='Fahrenheit'&&to==='Celsius')result=(val-32)*5/9;else if(from==='Fahrenheit'&&to==='Kelvin')result=(val-32)*5/9+273.15;else if(from==='Kelvin'&&to==='Celsius')result=val-273.15;else if(from==='Kelvin'&&to==='Fahrenheit')result=(val-273.15)*9/5+32;}
+function populateUnits(cat){fromEl.innerHTML='';toEl.innerHTML='';units[cat].forEach(u=>{let o1=document.createElement('option');
+o1.value=u;o1.textContent=u;fromEl.appendChild(o1);let o2=document.createElement('option');o2.value=u;o2.textContent=u;toEl.appendChild(o2)});
+toEl.selectedIndex=1;}
+function convert(){let val=parseFloat(inputEl.value);if(isNaN(val)){resultText.textContent='Enter a valid number';outputEl.value='';return;}
+let cat=categoryEl.value,from=fromEl.value,to=toEl.value,result=val;
+if(cat==='temperature'){if(from===to)result=val;else if(from==='Celsius'&&to==='Fahrenheit')result=val*9/5+32;
+else if(from==='Celsius'&&to==='Kelvin')result=val+273.15;else if(from==='Fahrenheit'&&to==='Celsius')result=(val-32)*5/9;
+else if(from==='Fahrenheit'&&to==='Kelvin')result=(val-32)*5/9+273.15;else if(from==='Kelvin'&&to==='Celsius')result=val-273.15;
+else if(from==='Kelvin'&&to==='Fahrenheit')result=(val-273.15)*9/5+32;}
 else if(cat==='weight'){const factors={Kilograms:1,Grams:0.001,Pounds:0.453592,Ounces:0.0283495};result=val*factors[from]/factors[to];}
 else if(cat==='distance'){const factors={Kilometers:1,Meters:0.001,Miles:1.60934,Yards:0.0009144};result=val*factors[from]/factors[to];}
 else if(cat==='currency'){convertCurrency(from,to,val);return;}
@@ -69,7 +84,8 @@ categoryEl.addEventListener('change',()=>{populateUnits(categoryEl.value);conver
 inputEl.addEventListener('input',convert);
 fromEl.addEventListener('change',convert);
 toEl.addEventListener('change',convert);
-copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(outputEl.value);copyBtn.textContent='Copied!';setTimeout(()=>copyBtn.textContent='Copy',1000);});
+copyBtn.addEventListener('click',()=>{navigator.clipboard.writeText(outputEl.value);
+copyBtn.textContent='Copied!';setTimeout(()=>copyBtn.textContent='Copy',1000);});
 populateUnits('temperature');
 </script>
 </body></html>
