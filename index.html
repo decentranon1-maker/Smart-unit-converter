@@ -41,7 +41,7 @@ const units={
 temperature:['Celsius','Fahrenheit','Kelvin'],
 weight:['Kilograms','Pounds','Grams','Ounces'],
 distance:['Kilometers','Miles','Meters','Yards'],
-currency:['USD','EUR','GBP','JPY','INR','CAD','AUD','CHF']
+currency:['USD','EUR','GBP','JPY','INR','CAD','AUD','CHF','NGN']
 };
 function populateUnits(cat){fromEl.innerHTML='';toEl.innerHTML='';units[cat].forEach(u=>{let o1=document.createElement('option');o1.value=u;o1.textContent=u;fromEl.appendChild(o1);let o2=document.createElement('option');o2.value=u;o2.textContent=u;toEl.appendChild(o2)});toEl.selectedIndex=1;}
 function convert(){let val=parseFloat(inputEl.value);if(isNaN(val)){resultText.textContent='Enter a valid number';outputEl.value='';return;}let cat=categoryEl.value,from=fromEl.value,to=toEl.value,result=val;
